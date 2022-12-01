@@ -4,7 +4,6 @@
 
 import csv
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load data
@@ -24,8 +23,8 @@ data = np.array(list(np.float_(data)))
 class KMEANS:
     # Experiment with different k values
     # k = 3
-    k = 5
-    # k = 10
+    # k = 5
+    k = 10
     max_iter = 300
     centroids = np.zeros(k)
 
@@ -41,11 +40,11 @@ class KMEANS:
     def fit(self):
         iteration = 0
         prev_centroids = None
+        sorted_points = None
 
         while np.not_equal(self.centroids, prev_centroids).any() and iteration < self.max_iter:
             # Sort each data point and assign it the nearest cluster
             sorted_points = [[] for _ in range(self.k)]
-
             for x in data:
                 distances = self.euclidean(x)
                 centroid_index = np.argmin(distances)
@@ -60,35 +59,28 @@ class KMEANS:
                     self.centroids[i] = prev_centroids[i]
             iteration += 1
 
-    def eval(self):
-        centroids = []
-        centroids_indexes = []
-        for x in data:
-            distances = self.euclidean(x)
-            centroids_index = np.argmin(distances)
-            centroids.append(self.centroids[centroids_index])
-            centroids_indexes.append(centroids_index)
+        # calculate sum square error
+        sse = 0
+        for i in range(self.k):
+            sse += np.sum(sorted_points[i] - self.centroids[i])
 
-        return centroids, centroids_indexes
+        return self.centroids, sse
 
 
 # Run the algorithm r times and select the solution that gives the lowest sum of squares error
 r = 10
-center = []
-classification = []
-sse = []
+centroid_array = []
+sse_array = []
 
 for i in range(r):
     kmeans = KMEANS()
-    kmeans.fit()
-    cntr, clss = kmeans.eval()
-    center.append(cntr)
-    classification.append(clss)
-    sse.append(np.sum(len(clss) * np.var(clss)))
+    i_centroid, i_sse = kmeans.fit()
+    centroid_array.append(i_centroid)
+    sse_array.append(i_sse)
 
-i = np.argmin(sse)
+# print data and centroids
+i = np.argmin(sse_array)
 
 plt.scatter(data[:, 0], data[:, 1], c="red")
-
-plt.plot([x for x, _ in center[i]], [y for _, y in center[i]], '+', markersize=10)
+plt.plot([x for x, _ in centroid_array[i]], [y for _, y in centroid_array[i]], '+', markersize=10)
 plt.show()
