@@ -2,6 +2,12 @@
 # CS 445
 # Program 3: k-means
 
+# This is a simple implementation for the k-means algorithm. The number of clusters and max iterations can be manually
+# changed. The program will randomly initialize k centroids and run the k-means algorithm. It will start off with
+# assigning each data point to the cluster whose mean has the least squared euclidean distance. Then it will calculate
+# new means to be the centroids of the data points in the new clusters. This will repeat until the algorithm converges
+# or max iterations exceeds.
+
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -80,7 +86,7 @@ for i in range(r):
 
 # print data and centroids
 i = np.argmin(sse_array)
-
+print(sse_array[i])
 plt.scatter(data[:, 0], data[:, 1], c="red")
 plt.plot([x for x, _ in centroid_array[i]], [y for _, y in centroid_array[i]], '+', markersize=10)
 plt.show()
