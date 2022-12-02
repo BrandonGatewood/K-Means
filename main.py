@@ -2,11 +2,9 @@
 # CS 445
 # Program 3: k-means
 
-# This is a simple implementation for the k-means algorithm. The number of clusters and max iterations can be manually
-# changed. The program will randomly initialize k centroids and run the k-means algorithm. It will start off with
-# assigning each data point to the cluster whose mean has the least squared euclidean distance. Then it will calculate
-# new means to be the centroids of the data points in the new clusters. This will repeat until the algorithm converges
-# or max iterations exceeds.
+# This is a simple program that implements the k-means algorithm. The program will run the algorithm r times and record
+# the sum square error for each run. Then it will choose the solution with the lowest sum square error to graph onto a
+# 2-d plot.
 
 import csv
 import numpy as np
@@ -25,7 +23,10 @@ data = np.array(list(np.float_(data)))
 
 
 # KMEANS class contains the k-means algorithm, it will assign the number of clusters and randomly initialize k
-# centroids.
+# centroids. The number of clusters and max iterations can be manually changed. The program will randomly initialize the
+# k centroids and run the k-means algorithm. It will start off with assigning each data point to the cluster whose mean
+# has the least squared euclidean distance. Then it will calculate new means to be the centroids of the data points in
+# the new clusters. This will repeat until the algorithm converges or max iterations exceeds.
 class KMEANS:
     # Experiment with different k values
     # k = 3
@@ -60,15 +61,15 @@ class KMEANS:
             prev_centroids = self.centroids
             self.centroids = [np.mean(cluster, axis=0) for cluster in sorted_points]
 
-            for i, centroid in enumerate(self.centroids):
-                if np.isnan(centroid).any():  # Catch any np.nans, resulting from a centroid having no points
-                    self.centroids[i] = prev_centroids[i]
             iteration += 1
 
         # calculate sum square error
-        sse = 0
+        distance = 0
         for i in range(self.k):
-            sse += np.sum(sorted_points[i] - self.centroids[i])
+            distance = (sorted_points[i] - self.centroids[i]) ** 2
+            distance = np.sum(distance, axis=1)
+            distance = np.sqrt(distance)
+        sse = np.sqrt(np.sum(distance))
 
         return self.centroids, sse
 
